@@ -19,3 +19,6 @@ secrets.tf
 
 # Idea
 .idea/*
+
+# Generated lambda bundle
+lambda.zip

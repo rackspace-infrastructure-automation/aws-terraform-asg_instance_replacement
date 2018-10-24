@@ -21,13 +21,13 @@ PATTERN
 resource "aws_cloudwatch_event_target" "events" {
   target_id = "${var.name}-events"
   rule      = "${aws_cloudwatch_event_rule.events.name}"
-  arn       = "${module.lambda.function_arn}"
+  arn       = "${aws_lambda_function.lambda.arn}"
 }
 
 resource "aws_lambda_permission" "events" {
   statement_id  = "${var.name}-events"
   action        = "lambda:InvokeFunction"
-  function_name = "${module.lambda.function_name}"
+  function_name = "${aws_lambda_function.lambda.function_name}"
   principal     = "events.amazonaws.com"
   source_arn    = "${aws_cloudwatch_event_rule.events.arn}"
 }
@@ -42,13 +42,18 @@ resource "aws_cloudwatch_event_rule" "schedule" {
 resource "aws_cloudwatch_event_target" "schedule" {
   target_id = "${var.name}-schedule"
   rule      = "${aws_cloudwatch_event_rule.schedule.name}"
-  arn       = "${module.lambda.function_arn}"
+  arn       = "${aws_lambda_function.lambda.arn}"
 }
 
 resource "aws_lambda_permission" "schedule" {
   statement_id  = "${var.name}-schedule"
   action        = "lambda:InvokeFunction"
-  function_name = "${module.lambda.function_name}"
+  function_name = "${aws_lambda_function.lambda.function_name}"
   principal     = "events.amazonaws.com"
   source_arn    = "${aws_cloudwatch_event_rule.schedule.arn}"
+}
+
+resource "aws_cloudwatch_log_group" "system_logs" {
+  name              = "/aws/lambda/${aws_lambda_function.lambda.function_name}"
+  retention_in_days = "${var.cloudwatch_log_retention}"
 }
