@@ -14,6 +14,17 @@ jobs:
       - run: cp -pr ~/module/.circleci/bin ~/bin
       - run: chmod +x ~/bin/*.sh
       - run:
+          name: install python linting dependencies
+          command: |
+            cd ~
+            apk add python3
+            pip3 install -U pip tox tox-pyenv
+      - run:
+          name: lint python code
+          command: |
+            cd ~/module
+            tox
+      - run:
           name: switch symlink to master branch
           command: cd ~ && ~/bin/check_master_tests.sh
       - run: cp -pr ~/module/tests/ ~/layers/ # Move tests into layers directory
