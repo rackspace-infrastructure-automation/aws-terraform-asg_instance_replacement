@@ -35,9 +35,10 @@ data "aws_ami" "amz_linux_2" {
   }
 }
 
-# module "instance_replacement" {
-#   source = "../../module"
-# }
+module "instance_replacement" {
+  source = "../../module"
+  name   = "ASGIR-${random_string.rstring.result}"
+}
 
 module "vpc" {
   source   = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=master"
