@@ -18,7 +18,7 @@ jobs:
           command: |
             cd ~
             apk add python3
-            pip3 install -U pip tox tox-pyenv
+            pip3 install -U pip tox tox-pyenv boto3
       - run:
           name: lint python code
           command: |
@@ -83,6 +83,9 @@ jobs:
       - run:
           name: apply branch updates
           command: cd ~ && ~/bin/apply.sh
+      - run:
+          name: apply ASG updates
+          command: cd ~ && ~/bin/apply_update.sh
       - run:
           name: destroy
           command: cd ~ && ~/bin/destroy.sh && ~/bin/destroy_s3_buckets.sh # must succeed or we have something to clean up manually

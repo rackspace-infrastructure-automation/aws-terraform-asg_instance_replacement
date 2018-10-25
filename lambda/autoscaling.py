@@ -1,6 +1,7 @@
 import boto3
 import collections
 import elb
+import os
 
 
 autoscaling = boto3.client('autoscaling')
@@ -93,9 +94,9 @@ class AutoScalingGroup(dict):
         management enabled via tags.
 
         """
-
+        managed_tag = os.environ.get("INSTANCE_REPLACEMENT_TAG", 'InstanceReplacement')
         for tag in self['Tags']:
-            if tag['Key'] == 'InstanceReplacement':
+            if tag['Key'] == managed_tag:
                 if tag['Value'].lower() in self.DISABLED_TAGS:
                     return False
                 return True
