@@ -79,15 +79,56 @@ resource "aws_lambda_function" "lambda" {
 
 data "aws_iam_policy_document" "lambda" {
   statement {
+    effect = "Deny"
+
+    actions = [
+      "autoscaling:ResumeProcesses",
+      "autoscaling:SetInstanceHealth",
+      "autoscaling:SuspendProcesses",
+      "autoscaling:UpdateAutoScalingGroup",
+    ]
+
+    resources = ["*"]
+
+    condition {
+      test     = "StringEqualsIgnoreCase"
+      variable = "autoscaling:ResourceTag/InstanceReplacement"
+
+      values = [
+        "0",
+        "disabled",
+        "false",
+        "no",
+        "off",
+      ]
+    }
+  }
+
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "autoscaling:ResumeProcesses",
+      "autoscaling:SetInstanceHealth",
+      "autoscaling:SuspendProcesses",
+      "autoscaling:UpdateAutoScalingGroup",
+    ]
+
+    resources = ["*"]
+
+    condition {
+      test     = "StringLike"
+      variable = "autoscaling:ResourceTag/InstanceReplacement"
+      values   = ["*"]
+    }
+  }
+
+  statement {
     effect = "Allow"
 
     actions = [
       "autoscaling:DescribeAutoScalingGroups",
       "autoscaling:DescribeAutoScalingInstances",
-      "autoscaling:ResumeProcesses",
-      "autoscaling:SetInstanceHealth",
-      "autoscaling:SuspendProcesses",
-      "autoscaling:UpdateAutoScalingGroup",
       "elasticloadbalancing:DescribeInstanceHealth",
       "elasticloadbalancing:DescribeTargetHealth",
     ]
