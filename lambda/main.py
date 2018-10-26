@@ -1,5 +1,4 @@
 import autoscaling
-import ec2
 import itertools
 
 
@@ -100,7 +99,7 @@ def replace_old_instances(asg):
                     instance_id,
                     status,
                 )
-                ec2.terminate_instance(instance)
+                asg.set_instance_unhealthy(instance)
 
             terminating_instance_ids.add(instance_id)
 
@@ -176,7 +175,7 @@ def replace_old_instances(asg):
 
     elif asg.instances.old:
 
-        # State D: teminate one old instance
+        # State D: terminate one old instance
 
         instances_in_termination_order = itertools.chain(
             asg.instances.old.unready,
