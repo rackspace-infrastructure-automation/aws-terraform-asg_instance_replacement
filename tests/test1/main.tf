@@ -64,3 +64,11 @@ module "asg" {
   scaling_min              = "1"
   subnets                  = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
 }
+
+output "asg" {
+  value = "${module.asg.asg_name_list[0]}"
+}
+
+output "lambda" {
+  value = "ASGIR-${random_string.rstring.result}"
+}
