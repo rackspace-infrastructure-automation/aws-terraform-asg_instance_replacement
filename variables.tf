@@ -7,7 +7,7 @@ variable "cloudwatch_log_retention" {
 variable "name" {
   description = "Name to use for resources"
   type        = "string"
-  default     = "tf-aws-asg-instance-replacement"
+  default     = "asg-instance-replacement"
 }
 
 variable "schedule" {
