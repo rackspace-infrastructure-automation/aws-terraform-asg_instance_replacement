@@ -1,4 +1,6 @@
-# terraform-aws-asg-instance-replacement
+# aws-terraform-asg_instance_replacement
+
+This module is a replacement for the CloudFormation feature that enables rolling updates of Autoscaling Group instances.
 
 This Terraform module automatically replaces old instances when an Auto Scaling Group's Launch Configuration changes. In other words: rolling AMI updates and instance type changes.
 
@@ -32,33 +34,52 @@ Add an `InstanceReplacement` tag to an ASG to enable instance replacement. If th
 
 ## Example
 
-```js
+``` HCL
 
-// Create the Lambda function and associated resources once per AWS account.
+# Create the Lambda function and associated resources once per region.
 
 module "asg_instance_replacement" {
-  source = "tf-aws-asg-instance-replacement"
-}
-
-// Enable this module for an ASG by adding the InstanceReplacement tag.
-
-resource "aws_autoscaling_group" "asg" {
-  ...
-
-  tag {
-    key                 = "InstanceReplacement"
-    value               = ""
-    propagate_at_launch = false
-  }
-
-  ...
+ source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-asg_instance_replacement//?ref=v0.0.1"
 }
 ```
+The required `InstanceReplacement` tag is set to true by default within the `aws-terraform-ec2_asg` module beginning with release v0.0.7.  This can be explicitly enabled or disabled via the `enable_rolling_updates` variable, as shown below
+``` HCL
+module "asg" {
+ source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.2"
+
+ ec2_os                 = "amazon"
+ subnets                = ["${module.vpc.private_subnets}"]
+ image_id               = "${var.image_id}"
+ resource_name          = "my_asg"
+ security_group_list    = ["${module.sg.private_web_security_group_id}"]
+ enable_rolling_updates = true  # A value of false will disable rolling updates for this ASG.
+}
+```
+To enable this functionality on ASGs created directly, add the `InstanceReplacement` tag with a true value.
+``` HCL
+resource "aws_autoscaling_group" "asg" {
+ ...
+
+ tag {
+   key                 = "InstanceReplacement"
+   value               = "true"
+   propagate_at_launch = false
+ }
+
+ ...
+}
+```
+
+Full working references are available at [examples](examples)
+
+
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|:----:|:-----:|:-----:|
-| name | Name to use for resources | string | `tf-aws-asg-instance-replacement` | no |
+| cloudwatch_log_retention | The number of days to retain Cloudwatch Logs for this instance. | string | `30` | no |
+| name | Name to use for resources | string | `asg-instance-replacement` | no |
 | schedule | Schedule for running the Lambda function | string | `rate(1 minute)` | no |
 | timeout | Lambda function timeout | string | `60` | no |
+
