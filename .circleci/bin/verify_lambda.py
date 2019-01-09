@@ -45,7 +45,7 @@ cw = get_client('cloudwatch')
 
 print("Checking Autoscaling Group instances...\n")
 asg_name = os.environ['ASG']
-endtime = datetime.today() + timedelta(minutes=5)
+endtime = datetime.today() + timedelta(minutes=10)
 while datetime.today() < endtime:
     response = autoscaling.describe_auto_scaling_groups(AutoScalingGroupNames=[asg_name])
     asg = response['AutoScalingGroups'][0]
