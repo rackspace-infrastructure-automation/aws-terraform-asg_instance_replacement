@@ -1,5 +1,9 @@
+terraform {
+  required_version = ">= 0.12"
+}
+
 provider "aws" {
-  version = "~> 2.2"
+  version = "~> 2.7"
   region  = "us-west-2"
 }
 
@@ -22,27 +26,27 @@ module "instance_replacement" {
 }
 
 module "vpc" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.0.10"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-vpc_basenetwork?ref=v0.12.1"
 
-  vpc_name = "ASGIR-${random_string.rstring.result}"
+  name = "ASGIR-${random_string.rstring.result}"
 }
 
 module "security_groups" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-security_group//?ref=v0.0.6"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-security_group//?ref=v0.12.0"
 
-  resource_name = "ASGIR-${random_string.rstring.result}"
-  vpc_id        = "${module.vpc.vpc_id}"
+  name   = "ASGIR-${random_string.rstring.result}"
+  vpc_id = module.vpc.vpc_id
 }
 
 module "asg" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.24"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.1"
 
   ec2_os                   = "amazon"
   install_codedeploy_agent = true
   instance_type            = "t2.micro"
-  resource_name            = "ASGIR-${random_string.rstring.result}"
+  name                     = "ASGIR-${random_string.rstring.result}"
   scaling_max              = 2
   scaling_min              = 1
-  security_group_list      = ["${module.security_groups.private_web_security_group_id}"]
-  subnets                  = ["${element(module.vpc.public_subnets, 0)}", "${element(module.vpc.public_subnets, 1)}"]
+  security_groups          = [module.security_groups.private_web_security_group_id]
+  subnets                  = module.vpc.private_subnets
 }

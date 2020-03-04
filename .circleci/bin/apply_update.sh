@@ -1,7 +1,9 @@
 #!/bin/sh
 
+rm -f ~/workspace/terraform.*.plan
+
 # Generate and create terraform overrides for our update ASG test
-MODULE_OVERRIDE=$(cat <<EOF
+cat > ~/module/override.tf <<EOF
 resource "aws_lambda_function" "lambda" {
 
     environment = {
@@ -9,25 +11,17 @@ resource "aws_lambda_function" "lambda" {
     }
 }
 EOF
-)
 
-TEST_OVERRIDE=$(cat <<EOF
+cat > ~/layers/test1/override.tf <<EOF
 module "asg" {
-  instance_type            = "t2.small"
 
-  additional_tags = [
-    {
-      key                 = "${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}"
-      value               = true
-      propagate_at_launch = true
-    },
-  ]
+  instance_type = "t2.small"
+
+  tags = {
+    "${CIRCLE_BRANCH}-${CIRCLE_BUILD_NUM}" = true
+  }
 }
 EOF
-)
-
-echo $MODULE_OVERRIDE > ~/module/override.tf
-echo $TEST_OVERRIDE > ~/layers/test1/override.tf
 
 # Execute the Plan and Apply to initiate the change
 ~/bin/plan.sh

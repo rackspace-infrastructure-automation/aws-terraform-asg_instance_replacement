@@ -40,7 +40,7 @@
  * # Create the Lambda function and associated resources once per region.
  *
  * module "asg_instance_replacement" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-asg_instance_replacement//?ref=v0.0.2"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-asg_instance_replacement//?ref=v0.12.0"
  * }
  * ```
  *
@@ -48,13 +48,13 @@
  *
  * ``` HCL
  * module "asg" {
- *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.24"
+ *   source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.1"
  *
  *   ec2_os                 = "amazon"
  *   enable_rolling_updates = true  # A value of false will disable rolling updates for this ASG.
- *   resource_name          = "my_asg"
- *   security_group_list    = ["${module.sg.private_web_security_group_id}"]
- *   subnets                = ["${module.vpc.private_subnets}"]
+ *   name                   = "my_asg"
+ *   security_groups        = [module.sg.private_web_security_group_id]
+ *   subnets                = module.vpc.private_subnets
  * }
  * ```
  *
@@ -75,5 +75,17 @@
  *
  * Full working references are available at [examples](examples)
  *
+ *
+ * ## Terraform 0.12 upgrade
+ *
+ * There should be no changes required to move from previous versions of this module to version 0.12.0 or higher.
+ *
  */
 
+terraform {
+  required_version = ">= 0.12"
+
+  required_providers {
+    aws = ">= 2.7.0"
+  }
+}
