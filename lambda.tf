@@ -70,9 +70,9 @@ resource "aws_lambda_function" "lambda" {
   filename                       = "${data.archive_file.lambda.output_path}"
   handler                        = "main.lambda_handler"
   memory_size                    = 128
-  reserved_concurrent_executions = 0
+  reserved_concurrent_executions = -1
   role                           = "${aws_iam_role.lambda.arn}"
-  runtime                        = "python3.6"
+  runtime                        = "python3.8"
   source_code_hash               = "${base64sha256(file(data.archive_file.lambda.output_path))}"
   timeout                        = "${var.timeout}"
 }
