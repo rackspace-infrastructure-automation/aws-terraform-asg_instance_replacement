@@ -4,25 +4,25 @@ data "aws_region" "current" {}
 
 data "aws_iam_policy_document" "assume_role" {
   statement {
-    effect  = "Allow"
     actions = ["sts:AssumeRole"]
+    effect  = "Allow"
 
     principals {
-      type        = "Service"
       identifiers = ["lambda.amazonaws.com"]
+      type        = "Service"
     }
   }
 }
 
 data "archive_file" "lambda" {
-  type        = "zip"
-  source_dir  = "${path.module}/lambda"
   output_path = "${path.module}/lambda.zip"
+  source_dir  = "${path.module}/lambda"
+  type        = "zip"
 }
 
 resource "aws_iam_role" "lambda" {
-  name               = "${var.name}"
   assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
+  name               = "${var.name}"
 }
 
 # Attach a policy for logs.
@@ -54,20 +54,20 @@ resource "aws_iam_policy" "lambda" {
 
 resource "aws_iam_policy_attachment" "logs" {
   name       = "${var.name}-logs"
-  roles      = ["${aws_iam_role.lambda.name}"]
   policy_arn = "${aws_iam_policy.logs.arn}"
+  roles      = ["${aws_iam_role.lambda.name}"]
 }
 
 resource "aws_iam_policy_attachment" "lambda" {
   name       = "${var.name}-lambda"
-  roles      = ["${aws_iam_role.lambda.name}"]
   policy_arn = "${aws_iam_policy.lambda.arn}"
+  roles      = ["${aws_iam_role.lambda.name}"]
 }
 
 resource "aws_lambda_function" "lambda" {
-  function_name                  = "${var.name}"
   description                    = "Manages ASG instance replacement"
   filename                       = "${data.archive_file.lambda.output_path}"
+  function_name                  = "${var.name}"
   handler                        = "main.lambda_handler"
   memory_size                    = 128
   reserved_concurrent_executions = -1
@@ -79,7 +79,8 @@ resource "aws_lambda_function" "lambda" {
 
 data "aws_iam_policy_document" "lambda" {
   statement {
-    effect = "Deny"
+    effect    = "Deny"
+    resources = ["*"]
 
     actions = [
       "autoscaling:ResumeProcesses",
@@ -87,8 +88,6 @@ data "aws_iam_policy_document" "lambda" {
       "autoscaling:SuspendProcesses",
       "autoscaling:UpdateAutoScalingGroup",
     ]
-
-    resources = ["*"]
 
     condition {
       test     = "StringEqualsIgnoreCase"
@@ -105,7 +104,8 @@ data "aws_iam_policy_document" "lambda" {
   }
 
   statement {
-    effect = "Allow"
+    effect    = "Allow"
+    resources = ["*"]
 
     actions = [
       "autoscaling:ResumeProcesses",
@@ -113,8 +113,6 @@ data "aws_iam_policy_document" "lambda" {
       "autoscaling:SuspendProcesses",
       "autoscaling:UpdateAutoScalingGroup",
     ]
-
-    resources = ["*"]
 
     condition {
       test     = "StringLike"
@@ -124,17 +122,14 @@ data "aws_iam_policy_document" "lambda" {
   }
 
   statement {
-    effect = "Allow"
+    effect    = "Allow"
+    resources = ["*"]
 
     actions = [
       "autoscaling:DescribeAutoScalingGroups",
       "autoscaling:DescribeAutoScalingInstances",
       "elasticloadbalancing:DescribeInstanceHealth",
       "elasticloadbalancing:DescribeTargetHealth",
-    ]
-
-    resources = [
-      "*",
     ]
   }
 }
