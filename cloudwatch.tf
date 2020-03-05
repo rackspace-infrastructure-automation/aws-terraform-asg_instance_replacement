@@ -19,17 +19,17 @@ PATTERN
 }
 
 resource "aws_cloudwatch_event_target" "events" {
-  target_id = "${var.name}-events"
-  rule      = "${aws_cloudwatch_event_rule.events.name}"
   arn       = "${aws_lambda_function.lambda.arn}"
+  rule      = "${aws_cloudwatch_event_rule.events.name}"
+  target_id = "${var.name}-events"
 }
 
 resource "aws_lambda_permission" "events" {
-  statement_id  = "${var.name}-events"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.lambda.function_name}"
   principal     = "events.amazonaws.com"
   source_arn    = "${aws_cloudwatch_event_rule.events.arn}"
+  statement_id  = "${var.name}-events"
 }
 
 # Also trigger it with a schedule.
@@ -40,17 +40,17 @@ resource "aws_cloudwatch_event_rule" "schedule" {
 }
 
 resource "aws_cloudwatch_event_target" "schedule" {
-  target_id = "${var.name}-schedule"
-  rule      = "${aws_cloudwatch_event_rule.schedule.name}"
   arn       = "${aws_lambda_function.lambda.arn}"
+  rule      = "${aws_cloudwatch_event_rule.schedule.name}"
+  target_id = "${var.name}-schedule"
 }
 
 resource "aws_lambda_permission" "schedule" {
-  statement_id  = "${var.name}-schedule"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.lambda.function_name}"
   principal     = "events.amazonaws.com"
   source_arn    = "${aws_cloudwatch_event_rule.schedule.arn}"
+  statement_id  = "${var.name}-schedule"
 }
 
 resource "aws_cloudwatch_log_group" "system_logs" {
