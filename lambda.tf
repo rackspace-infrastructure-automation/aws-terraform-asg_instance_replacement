@@ -21,8 +21,8 @@ data "archive_file" "lambda" {
 }
 
 resource "aws_iam_role" "lambda" {
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
-  name               = "${var.name}"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+  name               = var.name
 }
 
 # Attach a policy for logs.
@@ -44,37 +44,37 @@ data "aws_iam_policy_document" "logs" {
 
 resource "aws_iam_policy" "logs" {
   name   = "${var.name}-logs"
-  policy = "${data.aws_iam_policy_document.logs.json}"
+  policy = data.aws_iam_policy_document.logs.json
 }
 
 resource "aws_iam_policy" "lambda" {
   name   = "${var.name}-lambda"
-  policy = "${data.aws_iam_policy_document.lambda.json}"
+  policy = data.aws_iam_policy_document.lambda.json
 }
 
 resource "aws_iam_policy_attachment" "logs" {
   name       = "${var.name}-logs"
-  policy_arn = "${aws_iam_policy.logs.arn}"
-  roles      = ["${aws_iam_role.lambda.name}"]
+  policy_arn = aws_iam_policy.logs.arn
+  roles      = [aws_iam_role.lambda.name]
 }
 
 resource "aws_iam_policy_attachment" "lambda" {
   name       = "${var.name}-lambda"
-  policy_arn = "${aws_iam_policy.lambda.arn}"
-  roles      = ["${aws_iam_role.lambda.name}"]
+  policy_arn = aws_iam_policy.lambda.arn
+  roles      = [aws_iam_role.lambda.name]
 }
 
 resource "aws_lambda_function" "lambda" {
   description                    = "Manages ASG instance replacement"
-  filename                       = "${data.archive_file.lambda.output_path}"
-  function_name                  = "${var.name}"
+  filename                       = data.archive_file.lambda.output_path
+  function_name                  = var.name
   handler                        = "main.lambda_handler"
   memory_size                    = 128
   reserved_concurrent_executions = -1
-  role                           = "${aws_iam_role.lambda.arn}"
+  role                           = aws_iam_role.lambda.arn
   runtime                        = "python3.8"
-  source_code_hash               = "${base64sha256(file(data.archive_file.lambda.output_path))}"
-  timeout                        = "${var.timeout}"
+  source_code_hash               = filebase64sha256(data.archive_file.lambda.output_path)
+  timeout                        = var.timeout
 }
 
 data "aws_iam_policy_document" "lambda" {
@@ -133,3 +133,4 @@ data "aws_iam_policy_document" "lambda" {
     ]
   }
 }
+

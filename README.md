@@ -39,7 +39,7 @@ Add an `InstanceReplacement` tag to an ASG to enable instance replacement. If th
 # Create the Lambda function and associated resources once per region.
 
 module "asg_instance_replacement" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-asg_instance_replacement//?ref=v0.0.2"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-asg_instance_replacement//?ref=v0.12.0"
 }
 ```
 
@@ -47,13 +47,13 @@ The required `InstanceReplacement` tag is set to true by default within the `aws
 
 ``` HCL
 module "asg" {
-  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.0.24"
+  source = "git@github.com:rackspace-infrastructure-automation/aws-terraform-ec2_asg//?ref=v0.12.1"
 
   ec2_os                 = "amazon"
   enable_rolling_updates = true  # A value of false will disable rolling updates for this ASG.
-  resource_name          = "my_asg"
-  security_group_list    = ["${module.sg.private_web_security_group_id}"]
-  subnets                = ["${module.vpc.private_subnets}"]
+  name                   = "my_asg"
+  security_groups        = [module.sg.private_web_security_group_id]
+  subnets                = module.vpc.private_subnets
 }
 ```
 
@@ -74,21 +74,25 @@ resource "aws_autoscaling_group" "asg" {
 
 Full working references are available at [examples](examples)
 
+## Terraform 0.12 upgrade
+
+There should be no changes required to move from previous versions of this module to version 0.12.0 or higher.
+
 ## Providers
 
 | Name | Version |
 |------|---------|
 | archive | n/a |
-| aws | n/a |
+| aws | >= 2.7.0 |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:-----:|
-| cloudwatch\_log\_retention | The number of days to retain Cloudwatch Logs for this instance. | `string` | `"30"` | no |
+| cloudwatch\_log\_retention | The number of days to retain Cloudwatch Logs for this instance. | `number` | `30` | no |
 | name | Name to use for resources | `string` | `"asg-instance-replacement"` | no |
 | schedule | Schedule for running the Lambda function | `string` | `"rate(1 minute)"` | no |
-| timeout | Lambda function timeout | `string` | `"60"` | no |
+| timeout | Lambda function timeout | `number` | `60` | no |
 
 ## Outputs
 
