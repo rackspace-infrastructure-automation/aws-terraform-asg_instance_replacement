@@ -12,7 +12,7 @@ It waits for new instances to be completely healthy, ready and in service before
 
 ## Caution
 
-__Use this module with caution; it terminates healthy instances.__
+\_\_Use this module with caution; it terminates healthy instances.\_\_
 
 Care must be taken when using this module with certain types of instances, such as RabbitMQ and Elasticsearch cluster nodes. If these instances are using only ephemeral or in-memory storage, then terminating them too quickly could result in data loss.
 
@@ -74,6 +74,10 @@ resource "aws_autoscaling_group" "asg" {
 
 Full working references are available at [examples](examples)
 
+## Requirements
+
+No requirements.
+
 ## Providers
 
 | Name | Version |
@@ -81,10 +85,31 @@ Full working references are available at [examples](examples)
 | archive | n/a |
 | aws | n/a |
 
+## Modules
+
+No Modules.
+
+## Resources
+
+| Name |
+|------|
+| [archive_file](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) |
+| [aws_caller_identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) |
+| [aws_cloudwatch_event_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) |
+| [aws_cloudwatch_event_target](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) |
+| [aws_cloudwatch_log_group](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) |
+| [aws_iam_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) |
+| [aws_iam_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy_attachment) |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) |
+| [aws_iam_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) |
+| [aws_lambda_function](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) |
+| [aws_lambda_permission](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) |
+| [aws_region](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) |
+
 ## Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:-----:|
+|------|-------------|------|---------|:--------:|
 | cloudwatch\_log\_retention | The number of days to retain Cloudwatch Logs for this instance. | `string` | `"30"` | no |
 | name | Name to use for resources | `string` | `"asg-instance-replacement"` | no |
 | schedule | Schedule for running the Lambda function | `string` | `"rate(1 minute)"` | no |
@@ -93,4 +118,3 @@ Full working references are available at [examples](examples)
 ## Outputs
 
 No output.
-
