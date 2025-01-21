@@ -1,3 +1,6 @@
+> [!CAUTION]
+> This project is end of life. This repo will be deleted on June 2nd 2025.
+
 # aws-terraform-asg\_instance\_replacement
 
 This module is a replacement for the CloudFormation feature that enables rolling updates of Autoscaling Group instances.
